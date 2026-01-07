@@ -1,0 +1,16 @@
+# Large model files are stored outside the repo.
+models/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+
+# Runtime data
+media/
+logs/
+face/known_faces/face_db.json*
