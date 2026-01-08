@@ -70,6 +70,10 @@ python run_all.py
 python run_gui.py
 ```
 
+### Tự chạy khi khởi động (systemd user service)
+Hiện **đang tắt** để tránh lỗi khi chưa có màn hình đăng nhập.
+Nếu cần bật lại, dùng phần hướng dẫn trong lịch sử chỉnh sửa hoặc yêu cầu mình thêm lại.
+
 ## 🌐 API cho mobile app
 **Base URL:** `http://<API_HOST>:<API_PORT>` hoặc URL tunnel `https://<id>.trycloudflare.com`
 
@@ -119,6 +123,7 @@ Xoá toàn bộ event trên Pi5 (RAM + ảnh + log).
 - `DOORBELL_FACE_BACKEND` (`insightface` | `tflite`)
 - `DOORBELL_FACE_STRICT` (1 = bắt buộc InsightFace)
 - `DOORBELL_INSIGHTFACE_DET_SIZE` (mặc định 640)
+- `DOORBELL_DOOR_CLOSE_DELAY_SEC` (thời gian tự đóng cửa khi mất mặt)
 - `DOORBELL_FIREBASE_URL`, `DOORBELL_FIREBASE_KEY`, `DOORBELL_FIREBASE_AUTH`, `DOORBELL_FIREBASE_ENABLE`
 
 ## 🧠 Cách hoạt động (tóm tắt sâu)

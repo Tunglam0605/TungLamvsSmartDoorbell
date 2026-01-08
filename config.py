@@ -208,7 +208,10 @@ SERVO_MAX_PULSE_WIDTH = 0.0025
 # =========================================================
 DOOR_LIGHT_FOLLOW_DOOR = True
 DOOR_HOLD_ON_FACE = True
-DOOR_CLOSE_DELAY_SEC = 2.0
+try:
+    DOOR_CLOSE_DELAY_SEC = max(0.0, float(os.getenv("DOORBELL_DOOR_CLOSE_DELAY_SEC", "2.0")))
+except ValueError:
+    DOOR_CLOSE_DELAY_SEC = 2.0
 DOOR_REQUIRE_KNOWN = True
 DOOR_REQUIRE_REAL = False
 
