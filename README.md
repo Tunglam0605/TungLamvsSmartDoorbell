@@ -79,7 +79,7 @@ python run_gui.py
 ```
 
 ### GET `/events`
-Trả về **một event mới nhất** (list tối đa 1 item).
+Trả về danh sách event mới nhất (tối đa `EVENT_MAX_ITEMS`).
 
 ```json
 [
@@ -89,6 +89,13 @@ Trả về **một event mới nhất** (list tối đa 1 item).
     "type": "UNKNOWN",
     "imageUrl": "https://<public>/media/evt_001_20251231_061034.jpg",
     "personName": null
+  },
+  {
+    "eventId": "evt_002",
+    "timestamp": "2025-12-31 06:10:40",
+    "type": "KNOWN",
+    "imageUrl": "https://<public>/media/evt_002_20251231_061040.jpg",
+    "personName": "Anh Tuan"
   }
 ]
 ```

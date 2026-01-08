@@ -66,7 +66,7 @@ def health():
 def events():
     store = get_event_store()
     items = store.list_events() if store is not None else []
-    return items[:1]
+    return items
 
 
 @app.post("/events/clear")

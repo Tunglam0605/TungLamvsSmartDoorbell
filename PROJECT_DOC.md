@@ -70,7 +70,7 @@ FastAPI (/health, /events, /unlock, /lock)
 ### 4) API
 - `server/app.py` exposes:
   - `GET /health` - health check.
-  - `GET /events` - returns the most recent event (currently `items[:1]`).
+  - `GET /events` - returns event list (up to `EVENT_MAX_ITEMS`).
   - `POST /events/clear` - clears in-memory events, media images, and JSONL log.
   - `POST /unlock` - open door + light; logs `UNLOCK`.
   - `POST /lock` - close door + light; logs `LOCK`.
@@ -272,6 +272,6 @@ All defaults live in `config.py`. Many settings can be overridden by env vars.
 
 ## Notes and limitations
 - API has no auth; consider network isolation if exposed publicly.
-- `GET /events` currently returns only the newest event (`items[:1]`).
+- `GET /events` returns the latest list in memory (max `EVENT_MAX_ITEMS`).
 - Event list is in-memory; logs are append-only but not reloaded on startup.
 - `PUBLIC_BASE_URL` in `config.py` includes a hardcoded trycloudflare URL; update in production.
