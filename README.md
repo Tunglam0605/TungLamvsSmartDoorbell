@@ -114,6 +114,7 @@ Xoá toàn bộ event trên Pi5 (RAM + ảnh + log).
 ```json
 { "removeMedia": true, "removeLog": true }
 ```
+Nếu không gửi body, mặc định vẫn xoá cả ảnh và log.
 
 ## ⚙️ Biến môi trường quan trọng
 - `API_HOST`, `API_PORT`

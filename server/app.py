@@ -70,13 +70,18 @@ def events():
 
 
 @app.post("/events/clear")
-def clear_events(req: ClearEventsRequest):
+def clear_events(req: Optional[ClearEventsRequest] = None):
     store = get_event_store()
     if store is None:
         return {"ok": False, "message": "event store unavailable"}
+    remove_media = True
+    remove_log = True
+    if req is not None:
+        remove_media = bool(req.removeMedia)
+        remove_log = bool(req.removeLog)
     result = store.clear_events(
-        remove_media=bool(req.removeMedia),
-        remove_log=bool(req.removeLog),
+        remove_media=remove_media,
+        remove_log=remove_log,
     )
     return {"ok": True, **result}
 
