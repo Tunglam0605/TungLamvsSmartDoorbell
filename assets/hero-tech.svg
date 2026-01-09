@@ -1,0 +1,73 @@
+<svg width="1200" height="420" viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A1222"/>
+      <stop offset="50%" stop-color="#0E2A3F"/>
+      <stop offset="100%" stop-color="#133B5A"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="100%" stop-color="#7CFFB2"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1C2B3D" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="420" rx="28" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1200" height="420" rx="28" fill="url(#grid)" opacity="0.22"/>
+
+  <g stroke="url(#accent)" stroke-width="3" fill="none" opacity="0.9" filter="url(#glow)">
+    <path d="M 210 210 C 320 130, 470 130, 580 210"/>
+    <path d="M 580 210 C 700 290, 850 290, 970 210"/>
+    <path d="M 210 210 L 210 120"/>
+    <path d="M 970 210 L 970 120"/>
+  </g>
+
+  <g fill="#0F1C2E" stroke="#3BD6FF" stroke-width="2" filter="url(#glow)">
+    <!-- Camera -->
+    <rect x="130" y="160" width="160" height="100" rx="14"/>
+    <circle cx="210" cy="210" r="26" fill="#091522" stroke="#7CFFB2"/>
+    <circle cx="210" cy="210" r="8" fill="#00E5FF"/>
+
+    <!-- Door -->
+    <rect x="540" y="130" width="100" height="160" rx="10"/>
+    <circle cx="620" cy="210" r="6" fill="#FFB347" stroke="#FFB347"/>
+    <rect x="565" y="155" width="50" height="90" rx="8" fill="#0B1524" stroke="#245176"/>
+
+    <!-- Cloud -->
+    <g fill="#0F1C2E" stroke="#7CFFB2">
+      <circle cx="820" cy="210" r="28"/>
+      <circle cx="855" cy="200" r="24"/>
+      <circle cx="785" cy="205" r="22"/>
+      <rect x="785" y="210" width="92" height="26" rx="13"/>
+    </g>
+
+    <!-- Phone -->
+    <rect x="1010" y="140" width="90" height="150" rx="16"/>
+    <rect x="1030" y="165" width="50" height="90" rx="8" fill="#0B1524" stroke="#245176"/>
+    <circle cx="1055" cy="270" r="5" fill="#00E5FF" stroke="#00E5FF"/>
+  </g>
+
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#D8F6FF">
+    <text x="64" y="78" font-size="30" font-weight="700">Smart Doorbell</text>
+    <text x="64" y="110" font-size="16" fill="#9ED8E8">Edge AI + Cloud Tunnel + Mobile Control</text>
+
+    <text x="168" y="290" font-size="14" fill="#9ED8E8">Camera</text>
+    <text x="566" y="310" font-size="14" fill="#9ED8E8">Door</text>
+    <text x="808" y="285" font-size="14" fill="#9ED8E8">Cloud</text>
+    <text x="1020" y="310" font-size="14" fill="#9ED8E8">App</text>
+  </g>
+
+  <g stroke="#21344D" stroke-width="2" opacity="0.6">
+    <circle cx="210" cy="120" r="10" fill="#00E5FF"/>
+    <circle cx="970" cy="120" r="10" fill="#7CFFB2"/>
+  </g>
+</svg>

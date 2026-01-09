@@ -9,6 +9,15 @@ Hệ thống chuông cửa thông minh chạy trên Raspberry Pi 5: nhận diệ
 - 🌐 FastAPI cho mobile app (events, lock/unlock).
 - 🚀 Cloudflare tunnel + tự cập nhật URL lên Firebase RTDB.
 
+## Visual Overview
+Quick visuals for system, architecture, and data flow.
+
+![Smart Doorbell hero](assets/hero-tech.svg)
+
+![Architecture overview](assets/architecture.svg)
+
+![Data flow](assets/dataflow.svg)
+
 ## ✅ Yêu cầu cơ bản
 - Raspberry Pi 5 + camera (hoặc webcam USB).
 - Python 3.9+ (khuyến nghị 3.11).
@@ -179,6 +188,109 @@ Lưu ý:
    - `DOORBELL_FIREBASE_ENABLE=1`
 
 Sau khi chạy `run_all.py`, URL public sẽ được ghi vào `<DOORBELL_FIREBASE_KEY>.json` trong RTDB.
+
+### C) Chỉnh ở đâu (file/biến nào)
+- `config.py`: giá trị mặc định cho `PUBLIC_BASE_URL`, `FIREBASE_RTDB_URL`, `FIREBASE_RTDB_KEY`, `FIREBASE_RTDB_AUTH`, `FIREBASE_RTDB_ENABLE`. Nếu bạn không muốn set env, có thể sửa trực tiếp ở đây.
+- `run_all.py`: 
+  - `_start_tunnel()` dùng `DOORBELL_TUNNEL_CMD` và `DOORBELL_TUNNEL_TARGET` để chạy `cloudflared`.
+  - `_announce_tunnel_url()` cập nhật `PUBLIC_BASE_URL`/`DOORBELL_TUNNEL_URL` khi tunnel sẵn sàng.
+  - `_push_firebase_url()` gửi URL lên Firebase RTDB (PUT JSON).
+- `server/app.py`: định nghĩa API `/health`, `/events`, `/unlock`, `/lock`, `/events/clear` và định dạng request/response.
+- `server/event_store.py`: định dạng event, nơi tạo `imageUrl` từ `PUBLIC_BASE_URL`, và ghi log `logs/events.jsonl`.
+- `PROJECT_DOC.md`: bảng cấu hình và kiến trúc tổng quan.
+
+### D) Luồng giao tiếp & định dạng dữ liệu (Pi ↔ Server ↔ Firebase)
+#### 1) Luồng khởi động (run_all.py)
+```
+Pi (run_all.py)
+  ├─ start FastAPI (server/app.py)
+  ├─ start cloudflared tunnel (nếu bật)
+  ├─ đọc URL public (trycloudflare hoặc domain riêng)
+  └─ PUT URL lên Firebase RTDB (nếu enable)
+```
+`PUBLIC_BASE_URL` được dùng để tạo `imageUrl` khi lưu event. Nếu URL sai, app sẽ không xem được ảnh `/media/...`.
+
+#### 2) Luồng Cloudflare Tunnel
+- `cloudflared` tạo URL public hoặc domain riêng và reverse proxy về `http://API_HOST:API_PORT`.
+- Nếu dùng domain riêng, bạn **phải set** `PUBLIC_BASE_URL=https://<domain>` vì code chỉ tự nhận URL dạng `*.trycloudflare.com`.
+
+#### 3) Luồng Firebase RTDB (gửi URL public)
+`run_all.py` gửi request:
+```
+PUT {DOORBELL_FIREBASE_URL}/{DOORBELL_FIREBASE_KEY}.json?auth={DOORBELL_FIREBASE_AUTH}
+Content-Type: application/json
+Body: "https://doorbell.<ten-domain-cua-ban>"
+```
+Lưu ý:
+- `DOORBELL_FIREBASE_KEY` có thể là path dạng `doorbell/public_url` (RTDB cho phép dấu `/`).
+- Giá trị lưu là **chuỗi JSON** (string), không phải object.
+
+#### 4) Luồng API (app/mobile ↔ Pi)
+Base URL = `PUBLIC_BASE_URL` (hoặc `DOORBELL_TUNNEL_URL` nếu set thủ công).
+
+**GET `/health`**
+```json
+{ "ok": true }
+```
+
+**GET `/events`** (trả danh sách mới nhất trong RAM, max `EVENT_MAX_ITEMS`)
+```json
+[
+  {
+    "eventId": "evt_abcdef12",
+    "timestamp": "2025-12-31 06:10:34",
+    "type": "KNOWN",
+    "imageUrl": "https://<public>/media/evt_abcdef12_20251231_061034.jpg",
+    "personName": "Anh Tuan"
+  }
+]
+```
+Lưu ý: API response chỉ trả các field theo `server/app.py` (không gồm `source`/`meta`).
+
+**POST `/unlock`**
+```json
+{ "eventId": "evt_abcdef12", "source": "app" }
+```
+Response:
+```json
+{
+  "ok": true,
+  "eventId": "evt_abcdef12",
+  "message": "door opened",
+  "lightOk": true,
+  "timestamp": "2025-12-31T06:10:40.123Z"
+}
+```
+
+**POST `/lock`**
+```json
+{ "eventId": "evt_abcdef12", "source": "app" }
+```
+Response tương tự `/unlock` với `message` = `door closed`.
+
+**POST `/events/clear`**
+```json
+{ "removeMedia": true, "removeLog": true }
+```
+Response:
+```json
+{ "ok": true, "removedMedia": 12, "removedLog": true }
+```
+
+#### 5) Định dạng event lưu log (logs/events.jsonl)
+Mỗi dòng là JSON:
+```json
+{
+  "eventId": "evt_abcdef12",
+  "timestamp": "2025-12-31 06:10:34",
+  "type": "KNOWN",
+  "imageUrl": "https://<public>/media/evt_abcdef12_20251231_061034.jpg",
+  "personName": "Anh Tuan",
+  "source": "gui",
+  "meta": {}
+}
+```
+Với hành động API `/unlock`/`/lock`, `type` lần lượt là `UNLOCK`/`LOCK` và `meta` có `ok`, `message`, `requestEventId`.
 
 ## 🧠 Cách hoạt động (tóm tắt sâu)
 1) Camera đọc frame → nhận diện khuôn mặt (detector + embedding).

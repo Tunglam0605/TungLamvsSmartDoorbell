@@ -1,0 +1,73 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0B0F1A"/>
+      <stop offset="100%" stop-color="#1A2438"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 Z" fill="#7CFFB2"/>
+    </marker>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="520" fill="url(#bg)"/>
+
+  <text x="50" y="60" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#E2F3FF">Event + URL Flow</text>
+  <text x="50" y="86" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#9FB6D4">Capture events locally, publish public URL, sync to app</text>
+
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#DDEBFF">
+    <rect x="60" y="130" width="180" height="72" rx="12" fill="#101826" stroke="#00E5FF"/>
+    <text x="86" y="174">Frame Capture</text>
+
+    <rect x="290" y="130" width="200" height="72" rx="12" fill="#101826" stroke="#00E5FF"/>
+    <text x="315" y="174">Face + Liveness</text>
+
+    <rect x="520" y="130" width="190" height="72" rx="12" fill="#101826" stroke="#00E5FF"/>
+    <text x="560" y="174">EventStore</text>
+
+    <rect x="740" y="130" width="190" height="72" rx="12" fill="#101826" stroke="#7CFFB2"/>
+    <text x="775" y="174">Media + Logs</text>
+
+    <rect x="960" y="130" width="180" height="72" rx="12" fill="#101826" stroke="#7CFFB2"/>
+    <text x="990" y="174">API (/events)</text>
+  </g>
+
+  <g stroke="#7CFFB2" stroke-width="2.5" fill="none" marker-end="url(#arrow)" filter="url(#glow)">
+    <path d="M 240 166 L 290 166"/>
+    <path d="M 490 166 L 520 166"/>
+    <path d="M 710 166 L 740 166"/>
+    <path d="M 930 166 L 960 166"/>
+  </g>
+
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#DDEBFF">
+    <rect x="240" y="320" width="220" height="72" rx="12" fill="#0E1626" stroke="#00E5FF"/>
+    <text x="262" y="364">cloudflared tunnel</text>
+
+    <rect x="500" y="320" width="200" height="72" rx="12" fill="#0E1626" stroke="#00E5FF"/>
+    <text x="525" y="364">PUBLIC_BASE_URL</text>
+
+    <rect x="740" y="320" width="190" height="72" rx="12" fill="#0E1626" stroke="#7CFFB2"/>
+    <text x="775" y="364">Firebase RTDB</text>
+
+    <rect x="960" y="320" width="180" height="72" rx="12" fill="#0E1626" stroke="#FCD34D"/>
+    <text x="995" y="364">Mobile App</text>
+  </g>
+
+  <g stroke="#00E5FF" stroke-width="2.5" fill="none" marker-end="url(#arrow)" filter="url(#glow)">
+    <path d="M 460 356 L 500 356"/>
+    <path d="M 700 356 L 740 356"/>
+    <path d="M 930 356 L 960 356"/>
+  </g>
+
+  <g stroke="#FCD34D" stroke-width="2.5" fill="none" marker-end="url(#arrow)">
+    <path d="M 1050 202 L 1050 320"/>
+  </g>
+
+  <text x="560" y="410" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#9FB6D4">run_all.py pushes URL to RTDB</text>
+</svg>
