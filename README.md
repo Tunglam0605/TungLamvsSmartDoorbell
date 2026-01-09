@@ -127,6 +127,59 @@ Nếu không gửi body, mặc định vẫn xoá cả ảnh và log.
 - `DOORBELL_DOOR_CLOSE_DELAY_SEC` (thời gian tự đóng cửa khi mất mặt)
 - `DOORBELL_FIREBASE_URL`, `DOORBELL_FIREBASE_KEY`, `DOORBELL_FIREBASE_AUTH`, `DOORBELL_FIREBASE_ENABLE`
 
+## Hướng dẫn chuyển Cloudflare/Firebase về tài khoản của bạn
+Phần này dành cho người mới: tạo tài nguyên mới trong tài khoản của bạn và cập nhật biến môi trường để hệ thống dùng đúng Cloudflare/Firebase của bạn.
+
+### A) Cloudflare Tunnel (URL public)
+1) Tạo/đăng nhập Cloudflare, thêm domain (zone) của bạn.
+2) Cài `cloudflared` trên máy chạy dự án.
+3) Đăng nhập `cloudflared`:
+   ```bash
+   cloudflared tunnel login
+   ```
+4) Tạo tunnel:
+   ```bash
+   cloudflared tunnel create doorbell
+   ```
+5) Tạo DNS route (đặt subdomain theo ý bạn):
+   ```bash
+   cloudflared tunnel route dns doorbell doorbell.<ten-domain-cua-ban>
+   ```
+6) Tạo file cấu hình `cloudflared` (ví dụ `cloudflared/config.yml`):
+   ```yml
+   tunnel: doorbell
+   credentials-file: <duong-dan-toi-file-credentials>.json
+   ingress:
+     - hostname: doorbell.<ten-domain-cua-ban>
+       service: http://127.0.0.1:8000
+     - service: http_status:404
+   ```
+7) Cập nhật biến môi trường khi chạy app:
+   - `DOORBELL_TUNNEL_CMD=cloudflared tunnel --config <duong-dan-config.yml> run doorbell`
+   - `PUBLIC_BASE_URL=https://doorbell.<ten-domain-cua-ban>`
+   - (tuỳ chọn) `DOORBELL_TUNNEL_ENABLE=1`
+
+Lưu ý:
+- Nếu bạn chỉ dùng URL tạm `trycloudflare` (không cần tài khoản), giữ mặc định `DOORBELL_TUNNEL_CMD` và không cần cấu hình DNS.
+- Với tunnel gắn domain riêng, hãy set `PUBLIC_BASE_URL` thủ công vì code chỉ tự nhận URL dạng `*.trycloudflare.com`.
+
+### B) Firebase Realtime Database (để app/mobile đọc URL)
+1) Tạo Firebase project trong tài khoản của bạn.
+2) Mở **Realtime Database** → **Create Database** → chọn region.
+3) Thiết lập Rules:
+   - Thử nghiệm nhanh: bật `.read`/`.write` = `true`.
+   - Sản xuất: yêu cầu auth và dùng `DOORBELL_FIREBASE_AUTH`.
+4) Lấy Database URL dạng `https://<project>-default-rtdb.firebaseio.com/`.
+5) Chọn key/path để lưu URL (ví dụ `doorbell/public_url`).
+6) (Nếu cần auth) lấy **Database Secret** hoặc token hợp lệ.
+7) Cập nhật biến môi trường:
+   - `DOORBELL_FIREBASE_URL`
+   - `DOORBELL_FIREBASE_KEY`
+   - `DOORBELL_FIREBASE_AUTH` (nếu rules yêu cầu)
+   - `DOORBELL_FIREBASE_ENABLE=1`
+
+Sau khi chạy `run_all.py`, URL public sẽ được ghi vào `<DOORBELL_FIREBASE_KEY>.json` trong RTDB.
+
 ## 🧠 Cách hoạt động (tóm tắt sâu)
 1) Camera đọc frame → nhận diện khuôn mặt (detector + embedding).
 2) So khớp embedding với DB (`face/known_faces/face_db.json`).
